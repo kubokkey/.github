@@ -1,0 +1,50 @@
+name: 'Terraform-CICD'
+description: "terrform-cicd template"
+
+inputs:
+  tf_dir:
+    type: string
+    required: true
+  is_apply:
+    type: boolean
+    default: false
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.3.9
+
+    - name: Terraform Check Format
+      working-directory: ${{ inputs.tf_dir }}
+      shell: bash
+      run: terraform fmt -check
+
+    - name: Terraform Init
+      working-directory: ${{ inputs.tf_dir }}
+      shell: bash
+      run: terraform init -upgrade     
+
+    - name: Setup TFCmt
+      env:
+        TFCMT_VERSION: v4.2.0
+      shell: bash
+      run: |
+        wget "https://github.com/suzuki-shunsuke/tfcmt/releases/download/${TFCMT_VERSION}/tfcmt_linux_amd64.tar.gz" -O /tmp/tfcmt.tar.gz
+        tar xzf /tmp/tfcmt.tar.gz -C /tmp
+        mv /tmp/tfcmt /usr/local/bin
+        tfcmt --version
+
+    - name: Terraform Plan
+      if: ${{ inputs.is_apply == 'false' }}
+      working-directory: ${{ inputs.tf_dir }}
+      shell: bash
+      run: terraform plan -no-color -input=false -var 'profile=' 
+
+    - name: Terraform Apply
+      if: ${{ inputs.is_apply == 'true' }}
+      working-directory: ${{ inputs.tf_dir }}
+      shell: bash
+      run: terraform apply -auto-approve -input=false -var 'profile=' 

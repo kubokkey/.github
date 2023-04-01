@@ -1,0 +1,7 @@
+{
+    "name": "Use Terraform CICD Workflow for Prduction Environment",
+    "description": "",
+    "categories": [
+        "Terraform"
+    ]
+}
