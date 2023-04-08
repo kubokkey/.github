@@ -1,5 +1,5 @@
 {
-    "name": "Use Terraform CICD Workflow for Prduction Environment",
+    "name": "Reusable Terraform CICD Workflow",
     "description": "",
     "categories": [
         "Terraform"

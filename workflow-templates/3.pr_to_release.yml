@@ -1,0 +1,23 @@
+name: pr_to_release
+
+on:
+  pull_request:
+    branches:
+    - 'release'
+    
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable.terraform_ci.yml
+    secrets: inherit
+
+  tf_plan:
+    needs: ci
+    strategy:
+      matrix:
+        env: [stg,prd]
+    uses: ./.github/workflows/reusable.terraform_cd.yml
+    secrets: inherit
+    with:
+      environment: ${{ matrix.env }}
+      is_apply: false
+      

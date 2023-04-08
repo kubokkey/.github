@@ -1,0 +1,21 @@
+name: merge_to_develop
+
+on:
+  pull_request:
+    types: 
+    - closed
+    branches:
+    - 'develop'
+    
+jobs:
+  tf_apply:
+    if: github.event.pull_request.merged == true
+    strategy:
+      matrix:
+        env: [dev]
+    uses: ./.github/workflows/reusable.terraform_cd.yml
+    secrets: inherit
+    with:
+      environment: ${{ matrix.env }}
+      is_apply: true
+      
